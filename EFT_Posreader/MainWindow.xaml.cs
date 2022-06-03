@@ -131,9 +131,10 @@ namespace EFT_Posreader
         private async void TimerFunction(object? state)
         {
             Stopwatch sw = Stopwatch.StartNew();
-            Bitmap b = new(storage.ScreenRegion.Width, storage.ScreenRegion.Height);
-            Graphics g = Graphics.FromImage(b);
+            using Bitmap b = new(storage.ScreenRegion.Width, storage.ScreenRegion.Height);
+            using Graphics g = Graphics.FromImage(b);
             g.CopyFromScreen(storage.ScreenRegion.Start.X, storage.ScreenRegion.Start.Y, 0, 0, b.Size, CopyPixelOperation.SourceCopy);
+
             try {
                 using Engine engine = new(@"./tessdata", TesseractOCR.Enums.Language.English, TesseractOCR.Enums.EngineMode.Default);
                 using var ms = new MemoryStream();
@@ -148,13 +149,6 @@ namespace EFT_Posreader
             {
                 Trace.WriteLine("Exception:" + e.Message);
             }
-            
-            b.Dispose();
-            g.Dispose();
-            
-
-
-
         }
 
         private void EnableAllButtons(bool state)
@@ -198,13 +192,11 @@ namespace EFT_Posreader
         private void CheckboxDebug_Checked(object sender, RoutedEventArgs e)
         {
             storage.debugMode = true;
-            Trace.WriteLine(storage.debugMode);
         }
 
         private void CheckboxDebug_Unchecked(object sender, RoutedEventArgs e)
         {
             storage.debugMode = false;
-            Trace.WriteLine(storage.debugMode);
         }
     }
 }
