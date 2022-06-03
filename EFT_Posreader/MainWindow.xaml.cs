@@ -128,7 +128,7 @@ namespace EFT_Posreader
             LoadAndViewConfig();
         }
 
-        private async void TimerFunction(object? state)
+        private void TimerFunction(object? state)
         {
             Stopwatch sw = Stopwatch.StartNew();
             using Bitmap b = new(storage.ScreenRegion.Width, storage.ScreenRegion.Height);
