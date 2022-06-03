@@ -43,7 +43,7 @@ const ParsePayload = (payload) => {
         data.indexOf("("),
         data.indexOf(")")
     ];
-    const raw_coords = data.substring(index_coords[0] + 1, index_coords[1] - 1);
+    const raw_coords = data.substring(index_coords[0] + 1, index_coords[1]);
     let coords = raw_coords.split(",");
     console.log(coords);
 
