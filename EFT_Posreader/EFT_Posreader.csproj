@@ -10,13 +10,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <COMReference Include="{d37e2a3e-8545-3a39-9f4f-31827c9124ab}">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>4</VersionMinor>
+      <VersionMajor>2</VersionMajor>
+      <Guid>d37e2a3e-8545-3a39-9f4f-31827c9124ab</Guid>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="eft.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ini-parser" Version="2.5.2" />
-    <PackageReference Include="IronOcr" Version="2022.3.0" />
     <PackageReference Include="NHotkey.Wpf" Version="2.1.0" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="TesseractOCR" Version="5.1.9" />
     <PackageReference Include="WatsonWebsocket" Version="2.3.2.6" />
   </ItemGroup>
 
@@ -24,6 +34,33 @@
     <None Update="eft.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="C:\Users\Landu\.nuget\packages\tesseract\4.1.1\build\\..\x64\leptonica-1.80.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="C:\Users\Landu\.nuget\packages\tesseract\4.1.1\build\\..\x64\tesseract41.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="C:\Users\Landu\.nuget\packages\tesseract\4.1.1\build\\..\x86\tesseract41.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="C:\Users\Landu\.nuget\packages\tesseract\4.1.1\build\\..\x86\leptonica-1.80.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

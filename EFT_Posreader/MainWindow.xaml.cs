@@ -1,27 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Drawing.Imaging;
+using System.Drawing;
 using NHotkey;
 using NHotkey.Wpf;
-using IronOcr;
 using static EFT_Posreader.MousePos;
 using System.Diagnostics;
 using System.Threading;
-using System.Windows.Threading;
-using WatsonWebsocket;
+using TesseractOCR;
+using System.IO;
 
 namespace EFT_Posreader
 {
@@ -30,13 +18,11 @@ namespace EFT_Posreader
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static volatile Storage storage = new();
-        private static volatile IronTesseract tesseract = new();
-        private static volatile Logger logger;
+        private volatile Storage storage = new();
+        private volatile Logger logger;
         private SocketServer socketServer;
         private ConfigManager config = new();
         private Timer? timer;
-        
 
         public MainWindow()
         {
@@ -125,7 +111,7 @@ namespace EFT_Posreader
             Bitmap b = new(storage.ScreenRegion.Width, storage.ScreenRegion.Height);
             Graphics g = Graphics.FromImage(b);
             g.CopyFromScreen(storage.ScreenRegion.Start.X, storage.ScreenRegion.Start.Y, 0, 0, b.Size, CopyPixelOperation.SourceCopy);
-            b.Save(fileName, ImageFormat.Jpeg);
+            b.Save(fileName, System.Drawing.Imaging.ImageFormat.Jpeg);
             b.Dispose();
             g.Dispose();
             logger.Log("Test: Zapisano obraz!");
@@ -142,19 +128,33 @@ namespace EFT_Posreader
             LoadAndViewConfig();
         }
 
-        private void TimerFunction(object? state)
+        private async void TimerFunction(object? state)
         {
             Stopwatch sw = Stopwatch.StartNew();
             Bitmap b = new(storage.ScreenRegion.Width, storage.ScreenRegion.Height);
             Graphics g = Graphics.FromImage(b);
             g.CopyFromScreen(storage.ScreenRegion.Start.X, storage.ScreenRegion.Start.Y, 0, 0, b.Size, CopyPixelOperation.SourceCopy);
-            var result = tesseract.Read(b);
+            try {
+                using Engine engine = new(@"./tessdata", TesseractOCR.Enums.Language.English, TesseractOCR.Enums.EngineMode.Default);
+                using var ms = new MemoryStream();
+                b.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                using var img = TesseractOCR.Pix.Image.LoadFromMemory(ms);
+                using var result = engine.Process(img);
+                sw.Stop();
+                string value = $"/{sw.ElapsedMilliseconds}ms/ [{result.MeanConfidence}] $PLD$ {result.Text}";
+                if (storage.debugMode) logger.Log(value);
+                socketServer.Send(value);
+            } catch(Exception e)
+            {
+                Trace.WriteLine("Exception:" + e.Message);
+            }
+            
             b.Dispose();
             g.Dispose();
-            sw.Stop();
-            string value = $"/{sw.ElapsedMilliseconds}ms/ [{result.Confidence}%] $PLD$ {result.Text}";
-            if(storage.debugMode) logger.Log(value);
-            socketServer.Send(value);
+            
+
+
+
         }
 
         private void EnableAllButtons(bool state)
