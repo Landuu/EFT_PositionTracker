@@ -37,19 +37,39 @@ const ParsePayload = (payload) => {
     const confidence = Number(payload.substring(index_confidence[0] + 1, index_confidence[1] - 1).replace(",", "."));
     const data = payload.substring(index_data, payload.length - 1);
 
-    if(confidence < 75) return;
-
+    // Return if confidence is too low
+    if(confidence < 0.5) {
+        console.error("Confidence too low:", confidence);
+        return;
+    }
     const index_coords = [
         data.indexOf("("),
         data.indexOf(")")
     ];
+
+    // Return if no coordinates are found (probably some random data)
+    if(index_coords[0] == -1 || index_coords[1] == -1) {
+        console.error("Random data detected:", data);
+        return;
+    }
+
     const raw_coords = data.substring(index_coords[0] + 1, index_coords[1]);
     let coords = raw_coords.split(",");
-    console.log(coords);
+    let isNaN = false;
+    for(let i = 0; i < coords.length; i++) {
+        coords[i] = Number(coords[i]);
+        if(isNaN(coords[i])) isNaN = true;
+    }
+    
+    // Return is one value is Nan for some reason??
+    if(isNaN) {
+        console.error("Nan detected:", coords);
+        return;
+    }
 
-    document.getElementById("coord").value = coords[0] + "," + coords[1];
     const x = String(coords[0]);
     const y = String(coords[2]);
+    document.getElementById("coord").value = x + "," + y;
     origin.setLatLng([x, y]);
 }
 
