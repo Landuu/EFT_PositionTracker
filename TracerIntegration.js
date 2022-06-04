@@ -55,14 +55,15 @@ const ParsePayload = (payload) => {
 
     const raw_coords = data.substring(index_coords[0] + 1, index_coords[1]);
     let coords = raw_coords.split(",");
-    let isNaN = false;
+    let valueNaN = false;
     for(let i = 0; i < coords.length; i++) {
         coords[i] = Number(coords[i]);
-        if(isNaN(coords[i])) isNaN = true;
+        if(isNaN(coords[i])) valueNaN = true;
+        
     }
     
     // Return is one value is Nan for some reason??
-    if(isNaN) {
+    if(valueNaN) {
         console.error("Nan detected:", coords);
         return;
     }
