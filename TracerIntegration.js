@@ -32,7 +32,6 @@ const ParsePayload = (payload) => {
     ]
 
     const index_data = payload.search(/\$PLD\$/) + 6;
-    console.log(index_data);
 
     const confidence = Number(payload.substring(index_confidence[0] + 1, index_confidence[1] - 1).replace(",", "."));
     const data = payload.substring(index_data, payload.length - 1);
@@ -59,7 +58,6 @@ const ParsePayload = (payload) => {
     for(let i = 0; i < coords.length; i++) {
         coords[i] = Number(coords[i]);
         if(isNaN(coords[i])) valueNaN = true;
-        
     }
     
     // Return is one value is Nan for some reason??
@@ -71,7 +69,8 @@ const ParsePayload = (payload) => {
     const x = String(coords[0]);
     const y = String(coords[2]);
     document.getElementById("coord").value = x + "," + y;
-    origin.setLatLng([x, y]);
+    console.warn(`Set to ${x},${y}`);
+    origin.setLatLng([y,x]);
 }
 
 button.addEventListener("click", () => {
